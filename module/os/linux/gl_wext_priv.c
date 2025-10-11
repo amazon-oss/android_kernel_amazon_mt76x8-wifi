@@ -9423,83 +9423,6 @@ int priv_driver_show_dfs_state(IN struct net_device *prNetDev, IN char *pcComman
 	return	i4BytesWritten;
 }
 
-int priv_driver_show_dfs_abd123_param(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
-{
-	P_GLUE_INFO_T prGlueInfo = NULL;
-	INT_32 i4Argc = 0;
-	PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
-	INT_32 i4BytesWritten = 0;
-	UINT_8 ucCnt = 0;
-	struct P2P_abd123_INFO *prP2pabd123Info = NULL;
-
-	ASSERT(prNetDev);
-	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
-		return -1;
-	prGlueInfo = *((P_GLUE_INFO_T *) netdev_priv(prNetDev));
-
-	prP2pabd123Info = (struct P2P_abd123_INFO *) cnmMemAlloc(prGlueInfo->prAdapter,
-		RAM_TYPE_MSG, sizeof(*prP2pabd123Info));
-
-	DBGLOG(REQ, LOUD, "command is %s\n", pcCommand);
-	wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
-	DBGLOG(REQ, LOUD, "argc is %i\n", i4Argc);
-
-	p2pFuncGetabd123Info(prP2pabd123Info);
-
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nRDD idx: %d\n",
-			prP2pabd123Info->ucRddIdx);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nLong Pulse detected: %d\n",
-			prP2pabd123Info->ucLongDetected);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nPeriodic Pulse detected: %d\n",
-			prP2pabd123Info->ucPeriodicDetected);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nLPB Num: %d\n",
-			prP2pabd123Info->ucLPBNum);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nPPB Num: %d\n",
-			prP2pabd123Info->ucPPBNum);
-
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n===========================");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nLong Pulse Buffer Contents:\n");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\npulse_time    pulse_width    PRI\n");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n%-10d    %-11d    -\n"
-		, prP2pabd123Info->arLpbContent[ucCnt].u4LongStartTime
-		, prP2pabd123Info->arLpbContent[ucCnt].u2LongPulseWidth);
-	for (ucCnt = 1; ucCnt < prP2pabd123Info->ucLPBNum; ucCnt++) {
-		LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n%-10d    %-11d    %d\n"
-			, prP2pabd123Info->arLpbContent[ucCnt].u4LongStartTime
-			, prP2pabd123Info->arLpbContent[ucCnt].u2LongPulseWidth
-			, (prP2pabd123Info->arLpbContent[ucCnt].u4LongStartTime
-				- prP2pabd123Info->arLpbContent[ucCnt-1].u4LongStartTime) * 2 / 5);
-	}
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nLPB Period Valid: %d",
-			prP2pabd123Info->ucLPBPeriodValid);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nLPB Period Valid: %d\n",
-			prP2pabd123Info->ucLPBWidthValid);
-
-	ucCnt = 0;
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n===========================");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nPeriod Pulse Buffer Contents:\n");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\npulse_time    pulse_width    PRI\n");
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n%-10d    %-11d    -\n"
-		, prP2pabd123Info->arPpbContent[ucCnt].u4PeriodicStartTime
-		, prP2pabd123Info->arPpbContent[ucCnt].u2PeriodicPulseWidth);
-	for (ucCnt = 1; ucCnt < prP2pabd123Info->ucPPBNum; ucCnt++) {
-		LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\n%-10d    %-11d    %d\n"
-			, prP2pabd123Info->arPpbContent[ucCnt].u4PeriodicStartTime
-			, prP2pabd123Info->arPpbContent[ucCnt].u2PeriodicPulseWidth
-			, (prP2pabd123Info->arPpbContent[ucCnt].u4PeriodicStartTime
-				- prP2pabd123Info->arPpbContent[ucCnt-1].u4PeriodicStartTime) * 2 / 5);
-	}
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nPRI Count M1 TH: %d; PRI Count M1: %d",
-			prP2pabd123Info->ucPRICountM1TH, prP2pabd123Info->ucPRICountM1);
-	LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nPRI Count M2 TH: %d; PRI Count M2: %d",
-			prP2pabd123Info->ucPRICountM2TH, prP2pabd123Info->ucPRICountM2);
-
-
-	cnmMemFree(prGlueInfo->prAdapter, prP2pabd123Info);
-
-	return	i4BytesWritten;
-}
-
 int priv_driver_show_dfs_help(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
 {
 	INT_32 i4Argc = 0;
@@ -9590,25 +9513,6 @@ int priv_driver_set_rdd_report(IN struct net_device *prNetDev, IN char *pcComman
 	return 0;
 }
 
-int priv_driver_clean_dfs_abd123_param(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
-{
-       INT_32 i4Argc = 0;
-       PCHAR apcArgv[WLAN_CFG_ARGV_MAX];
-       INT_32 i4BytesWritten = 0;
-
-       ASSERT(prNetDev);
-       if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
-               return -1;
-
-       DBGLOG(REQ, LOUD, "command is %s\n", pcCommand);
-       wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
-       DBGLOG(REQ, LOUD, "argc is %i\n", i4Argc);
-
-       p2pFuncabd123InfoInit();
-
-       LOGBUF(pcCommand, i4TotalLen, i4BytesWritten, "\nClean up abd123 param\n");
-       return  i4BytesWritten;
-}
 #if 0
 int priv_driver_set_bypass_cac(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
 {
@@ -9642,47 +9546,6 @@ int priv_driver_set_bypass_cac(IN struct net_device *prNetDev, IN char *pcComman
 	return 0;
 }
 #endif
-
-int priv_driver_set_abd123_detect_mode(IN struct net_device *prNetDev, IN char *pcCommand, IN int i4TotalLen)
-{
-	INT_32 i4Argc = 0;
-	PCHAR apcArgv[WLAN_CFG_ARGV_MAX] = { 0 };
-	UINT_32 u4Ret;
-	INT_32 i4ArgNum = 2;
-	UINT_8 ucabd123DetectMode;
-
-	ASSERT(prNetDev);
-	if (GLUE_CHK_PR2(prNetDev, pcCommand) == FALSE)
-		return -1;
-
-	DBGLOG(REQ, LOUD, "command is %s\n", pcCommand);
-	wlanCfgParseArgument(pcCommand, &i4Argc, apcArgv);
-	DBGLOG(REQ, LOUD, "argc is %i\n", i4Argc);
-
-	if (i4Argc >= i4ArgNum) {
-		u4Ret = kalkStrtou8(apcArgv[1], 0, &ucabd123DetectMode);
-		if (u4Ret) {
-			DBGLOG(REQ, LOUD, "parse abd123 detect mode error - u4Ret=%d\n", u4Ret);
-			return -1;
-		}
-		if (p2pFuncGetDfsState() == DFS_STATE_INACTIVE || p2pFuncGetDfsState() == DFS_STATE_DETECTED) {
-			DBGLOG(REQ, ERROR, "RDD Report is not supported in this DFS state (inactive or deteted)\n");
-			return -1;
-		}
-
-		if (ucabd123DetectMode != 0 && ucabd123DetectMode != 1) {
-			DBGLOG(REQ, ERROR, "abd123 Detect Mode is not \"0\" or \"1\", Invalid data\n");
-			return -1;
-		}
-
-		p2pFuncSetabd123DetectMode(ucabd123DetectMode);
-
-		if ( MT_ATESetabd123DetectMode(prNetDev, ucabd123DetectMode) != 0)
-			return -1;
-	}
-
-	return 0;
-}
 
 #endif
 #ifdef CFG_SUPPORT_ADJUST_MCC_STAY_TIME
@@ -15514,23 +15377,16 @@ INT_32 priv_driver_cmds(IN struct net_device *prNetDev, IN PCHAR pcCommand, IN I
 #if (CFG_SUPPORT_DFS_MASTER == 1)
 		else if (strnicmp(pcCommand, CMD_SHOW_DFS_STATE, strlen(CMD_SHOW_DFS_STATE)) == 0) {
 			i4BytesWritten = priv_driver_show_dfs_state(prNetDev, pcCommand, i4TotalLen);
-		} else if (strnicmp(pcCommand, CMD_SHOW_DFS_abd123_PARAM, strlen(CMD_SHOW_DFS_abd123_PARAM)) == 0) {
-			i4BytesWritten = priv_driver_show_dfs_abd123_param(prNetDev, pcCommand, i4TotalLen);
 		} else if (strnicmp(pcCommand, CMD_SHOW_DFS_HELP, strlen(CMD_SHOW_DFS_HELP)) == 0) {
 			i4BytesWritten = priv_driver_show_dfs_help(prNetDev, pcCommand, i4TotalLen);
 		} else if (strnicmp(pcCommand, CMD_SHOW_DFS_CAC_TIME, strlen(CMD_SHOW_DFS_CAC_TIME)) == 0) {
 			i4BytesWritten = priv_driver_show_dfs_cac_time(prNetDev, pcCommand, i4TotalLen);
 		} else if (strnicmp(pcCommand, CMD_SET_RDD_REPORT, strlen(CMD_SET_RDD_REPORT)) == 0) {
 			i4BytesWritten = priv_driver_set_rdd_report(prNetDev, pcCommand, i4TotalLen);
-                } else if (strnicmp(pcCommand, CMD_CLEAN_DFS_abd123_PARAM, strlen(CMD_CLEAN_DFS_abd123_PARAM)) == 0) {
-                        i4BytesWritten = priv_driver_clean_dfs_abd123_param(prNetDev, pcCommand, i4TotalLen);
-
 #if 0
 		} else if (strnicmp(pcCommand, CMD_SET_BYPASS_CAC, strlen(CMD_SET_BYPASS_CAC)) == 0) {
 			i4BytesWritten = priv_driver_set_bypass_cac(prNetDev, pcCommand, i4TotalLen);
 #endif
-		} else if (strnicmp(pcCommand, CMD_SET_abd123_DETECT_MODE, strlen(CMD_SET_abd123_DETECT_MODE)) == 0) {
-			i4BytesWritten = priv_driver_set_abd123_detect_mode(prNetDev, pcCommand, i4TotalLen);
 		}
 #endif
 #if CFG_SUPPORT_CAL_RESULT_BACKUP_TO_HOST
