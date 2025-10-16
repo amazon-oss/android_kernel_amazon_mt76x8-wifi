@@ -1036,8 +1036,8 @@ int mtk_cfg80211_auth(struct wiphy *wiphy, struct net_device *ndev,
 	prGlueInfo = (P_GLUE_INFO_T) wiphy_priv(wiphy);
 	ASSERT(prGlueInfo);
 
-	if (req->sae_data_len != 0)
-		DBGLOG(REQ, INFO, "[wlan] mtk_cfg80211_auth %p %zu\n", req->sae_data, req->sae_data_len);
+	if (req->auth_data_len != 0)
+		DBGLOG(REQ, INFO, "[wlan] mtk_cfg80211_auth %p %zu\n", req->auth_data, req->auth_data_len);
 	DBGLOG(REQ, STATE, "auth to  BSS [" MACSTR "]\n", MAC2STR((PUINT_8)req->bss->bssid));
 	DBGLOG(REQ, STATE, "auth_type:%d\n", req->auth_type);
 
@@ -1061,17 +1061,17 @@ int mtk_cfg80211_auth(struct wiphy *wiphy, struct net_device *ndev,
 	/*<2> Set  Auth data */
 	prConnSettings->ucAuthDataLen = 0;
 #if KERNEL_VERSION(4, 10, 0) > CFG80211_VERSION_CODE
-	if (req->sae_data_len != 0) {
-		if (req->sae_data_len > AUTH_DATA_MAX_LEN) {
-			DBGLOG(INIT, WARN, "request auth with unexpected length:%d\n", req->sae_data_len);
+	if (req->auth_data_len != 0) {
+		if (req->auth_data_len > AUTH_DATA_MAX_LEN) {
+			DBGLOG(INIT, WARN, "request auth with unexpected length:%d\n", req->auth_data_len);
 			return -EFAULT;
 		}
 
-		kalMemCopy(prConnSettings->aucAuthData, req->sae_data, req->sae_data_len);
-		prConnSettings->ucAuthDataLen = req->sae_data_len;
+		kalMemCopy(prConnSettings->aucAuthData, req->auth_data, req->auth_data_len);
+		prConnSettings->ucAuthDataLen = req->auth_data_len;
 
 		DBGLOG(INIT, INFO, "Dump auth data in connectSettings, auth len:%d\n", prConnSettings->ucAuthDataLen);
-		DBGLOG_MEM8(REQ, INFO, prConnSettings->aucAuthData,	req->sae_data_len);
+		DBGLOG_MEM8(REQ, INFO, prConnSettings->aucAuthData,	req->auth_data_len);
 	}
 #else
 	if (req->auth_data_len != 0) {
