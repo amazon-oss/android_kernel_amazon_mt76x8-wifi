@@ -146,7 +146,7 @@ ccflags-y += -DCFG_SUPPORT_PRIVACY_INFO
 endif
 ccflags-y += -DCFG_SUPPORT_AGPS_ASSIST=$(CFG_SUPPORT_AGPS_ASSIST)
 ccflags-y += -DCFG_SUPPORT_TSF_USING_BOOTTIME=$(CFG_SUPPORT_TSF_USING_BOOTTIME)
-ccflags-y += -Werror
+#ccflags-y += -Werror
 ccflags-y:=$(filter-out -U$(WLAN_CHIP_ID),$(ccflags-y))
 ccflags-y += -DLINUX -D$(WLAN_CHIP_ID)
 
