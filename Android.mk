@@ -21,7 +21,7 @@ $(_mt76x8_wlan_ko): $(KERNEL_OUT)/arch/$(TARGET_KERNEL_ARCH)/boot/$(BOARD_KERNEL
 	@mkdir -p $(KERNEL_MODULES_OUT)/lib/modules
 	@cp -R $(MT76X8_WLAN_PATH)/module/* $(_mt76x8_wlan_intermediates)/
 	@cp -f $(MT76X8_WLAN_PATH)/configs/$(TARGET_DEVICE).config $(_mt76x8_wlan_intermediates)/.config
-	$(hide) +$(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(KERNEL_OUT) M=$(abspath $(_mt76x8_wlan_intermediates)) ARCH=$(TARGET_KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) MODULE_NAME=$(_mt76x8_wlan_mod_name) modules
+	$(hide) +$(MAKE) -C $(KERNEL_OUT) M=$(abspath $(_mt76x8_wlan_intermediates)) ARCH=$(TARGET_KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) MODULE_NAME=$(_mt76x8_wlan_mod_name) modules
 	modules=$$(find $(_mt76x8_wlan_intermediates) -type f -name '*.ko'); \
 	for f in $$modules; do \
 		$(KERNEL_TOOLCHAIN_PATH)strip --strip-unneeded $$f; \
