@@ -84,6 +84,13 @@
 *                              C O N S T A N T S
 ********************************************************************************
 */
+#ifndef WLAN_AKM_SUITE_FT_8021X
+#define WLAN_AKM_SUITE_FT_8021X		0x000FAC03
+#endif
+#ifndef WLAN_AKM_SUITE_FT_PSK
+#define WLAN_AKM_SUITE_FT_PSK		0x000FAC04
+#endif
+
 #if CFG_SUPPORT_WAPI
 #define KEY_BUF_SIZE	1024
 #endif
@@ -3479,6 +3486,14 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 				eAuthMode = AUTH_MODE_WPA2_PSK;
 				u4AkmSuite = RSN_AKM_SUITE_PSK;
 				break;
+			case WLAN_AKM_SUITE_FT_8021X:
+				eAuthMode = AUTH_MODE_WPA2;
+				u4AkmSuite = RSN_AKM_SUITE_802_1X;
+				break;
+			case WLAN_AKM_SUITE_FT_PSK:
+				eAuthMode = AUTH_MODE_WPA2_PSK;
+				u4AkmSuite = RSN_AKM_SUITE_PSK;
+				break;
 #if CFG_SUPPORT_802_11W
 			/* Notice:: Need kernel patch!! */
 			case WLAN_AKM_SUITE_8021X_SHA256:
@@ -3501,6 +3516,10 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 #if CFG_SUPPORT_SAE
 			/* Need to add in WPA also? */
 			case WLAN_AKM_SUITE_SAE:
+				eAuthMode = AUTH_MODE_WPA2_SAE;
+				u4AkmSuite = RSN_AKM_SUITE_SAE;
+			break;
+			case WLAN_AKM_SUITE_FT_OVER_SAE:
 				eAuthMode = AUTH_MODE_WPA2_SAE;
 				u4AkmSuite = RSN_AKM_SUITE_SAE;
 			break;
