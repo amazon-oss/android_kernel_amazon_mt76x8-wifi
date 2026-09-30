@@ -823,6 +823,7 @@
 #define ELEM_ID_RSN                                 48	/* RSN IE */
 #define ELEM_ID_EXTENDED_SUP_RATES                  50	/* Extended supported rates */
 #define ELEM_ID_NEIGHBOR_REPORT                     52	/* Neighbor Report */
+#define ELEM_ID_MOBILITY_DOMAIN                     54	/* 802.11r Mobility Domain */
 #if CFG_SUPPORT_802_11W
 #define ELEM_ID_TIMEOUT_INTERVAL                    56	/* 802.11w SA Timeout interval */
 #endif
@@ -936,6 +937,7 @@
 /* 7.3.2.25 RSN information element */
 #define ELEM_MAX_LEN_WPA                            34	/* one pairwise, one AKM suite, one PMKID */
 #define ELEM_MAX_LEN_RSN                            38	/* one pairwise, one AKM suite, one PMKID */
+#define ELEM_MAX_LEN_MOBILITY_DOMAIN                3	/* MDID + FT capability and policy */
 #define ELEM_MAX_LEN_WAPI                           38	/* one pairwise, one AKM suite, one BKID */
 #define ELEM_MAX_LEN_WSC                            200	/* one pairwise, one AKM suite, one BKID */
 

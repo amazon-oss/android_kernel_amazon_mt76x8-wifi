@@ -3486,13 +3486,17 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 				eAuthMode = AUTH_MODE_WPA2_PSK;
 				u4AkmSuite = RSN_AKM_SUITE_PSK;
 				break;
+			/* The supplicant runs FT (SME), so advertise the FT AKM it chose;
+			 * mapping it to the non-FT AKM makes the AP run a plain 4-way
+			 * handshake the supplicant then rejects.
+			 */
 			case WLAN_AKM_SUITE_FT_8021X:
 				eAuthMode = AUTH_MODE_WPA2;
-				u4AkmSuite = RSN_AKM_SUITE_802_1X;
+				u4AkmSuite = RSN_AKM_SUITE_FT_802_1X;
 				break;
 			case WLAN_AKM_SUITE_FT_PSK:
 				eAuthMode = AUTH_MODE_WPA2_PSK;
-				u4AkmSuite = RSN_AKM_SUITE_PSK;
+				u4AkmSuite = RSN_AKM_SUITE_FT_PSK;
 				break;
 #if CFG_SUPPORT_802_11W
 			/* Notice:: Need kernel patch!! */
@@ -3565,6 +3569,7 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 
 	/* 7. Parsing desired ie from upper layer */
 	prGlueInfo->fgWpsActive = FALSE;
+	kalMemSet(&prConnSettings->rMde, 0, sizeof(struct MDE));
 
 	if (req->ie && req->ie_len > 0) {
 #if CFG_SUPPORT_CFG80211_AUTH
@@ -3644,6 +3649,18 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 			kalMemSet(&prGlueInfo->prAdapter->rWifiVar.rConnSettings.rOweInfo, 0, sizeof(struct OWE_INFO_T));
 		}
 #endif
+		/* Carry the MDE for FT initial mobility domain association */
+		if ((u4AkmSuite == RSN_AKM_SUITE_FT_PSK || u4AkmSuite == RSN_AKM_SUITE_FT_802_1X) &&
+		    wextSrchDesiredWPAIE(pucIEStart, req->ie_len, ELEM_ID_MOBILITY_DOMAIN,
+					 (uint8_t **) &prDesiredIE)) {
+			if (IE_LEN(prDesiredIE) == ELEM_MAX_LEN_MOBILITY_DOMAIN) {
+				kalMemCopy(&prConnSettings->rMde, prDesiredIE, sizeof(struct MDE));
+				DBGLOG(REQ, INFO, "DUMP MDE, EID %x length %x\n", *prDesiredIE, IE_SIZE(prDesiredIE));
+				DBGLOG_MEM8(REQ, INFO, &prConnSettings->rMde, sizeof(struct MDE));
+			} else {
+				DBGLOG(RSN, ERROR, "Invalid MDE length %u\n", IE_LEN(prDesiredIE));
+			}
+		}
 #if CFG_SUPPORT_H2E
 		/* Gen RSNXE */
 		if (wextSrchDesiredWPAIE(pucIEStart, req->ie_len, 0xf4, (uint8_t **) &prDesiredIE)) {

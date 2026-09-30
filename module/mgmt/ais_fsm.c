@@ -241,6 +241,7 @@ VOID aisInitializeConnectionSettings(IN P_ADAPTER_T prAdapter, IN P_REG_INFO_T p
 #if CFG_SUPPORT_H2E
 	kalMemSet(&prConnSettings->rRsnXE, 0, sizeof(struct RSNXE));
 #endif
+	kalMemSet(&prConnSettings->rMde, 0, sizeof(struct MDE));
 }				/* end of aisFsmInitializeConnectionSettings() */
 
 /*----------------------------------------------------------------------------*/
