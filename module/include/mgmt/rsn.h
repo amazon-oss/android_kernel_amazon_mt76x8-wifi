@@ -104,6 +104,8 @@
 #define RSN_AKM_SUITE_NONE              0x00AC0F00
 #define RSN_AKM_SUITE_802_1X            0x01AC0F00
 #define RSN_AKM_SUITE_PSK               0x02AC0F00
+#define RSN_AKM_SUITE_FT_802_1X         0x03AC0F00
+#define RSN_AKM_SUITE_FT_PSK            0x04AC0F00
 #if CFG_SUPPORT_802_11W
 #define RSN_AKM_SUITE_802_1X_SHA256     0x05AC0F00
 #define RSN_AKM_SUITE_PSK_SHA256        0x06AC0F00
@@ -283,6 +285,9 @@ UINT_32 rsnCalOweIELen(IN P_ADAPTER_T prAdapter, IN UINT_8 ucBssIndex, P_STA_REC
 void rsnGenerateRSNXE(IN P_ADAPTER_T prAdapter,	IN OUT P_MSDU_INFO_T prMsduInfo);
 uint32_t rsnCalRSNXELen(IN P_ADAPTER_T prAdapter,	IN uint8_t ucBssIndex, P_STA_RECORD_T prStaRec);
 #endif
+
+void rsnGenerateMDE(IN P_ADAPTER_T prAdapter, IN OUT P_MSDU_INFO_T prMsduInfo);
+uint32_t rsnCalMDELen(IN P_ADAPTER_T prAdapter, IN uint8_t ucBssIndex, P_STA_RECORD_T prStaRec);
 
 /*******************************************************************************
 *                              F U N C T I O N S

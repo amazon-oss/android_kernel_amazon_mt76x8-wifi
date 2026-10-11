@@ -97,6 +97,8 @@ APPEND_VAR_IE_ENTRY_T txAssocReqIETable[] = {
 	{(ELEM_HDR_LEN + 5), NULL, rlmReqGenerateRRMEnabledCapIE}
 	,			/* Assoc IE Order: 10, Element ID: 70 */
 #endif
+	{0, rsnCalMDELen, rsnGenerateMDE}
+	,			/* Assoc IE Order: 11, Element ID: 54 */
 	{(ELEM_HDR_LEN + ELEM_MAX_LEN_HT_CAP), NULL, rlmReqGenerateHtCapIE}
 	,			/* Assoc IE Order: 13, Element ID: 45 */
 	{(ELEM_HDR_LEN + ELEM_MAX_LEN_EXT_CAP), NULL, rlmReqGenerateExtCapIE}

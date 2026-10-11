@@ -251,6 +251,8 @@ typedef struct _CONNECTION_SETTINGS_T {
 #if CFG_SUPPORT_H2E
 	struct RSNXE rRsnXE;
 #endif
+
+	struct MDE rMde;
 } CONNECTION_SETTINGS_T, *P_CONNECTION_SETTINGS_T;
 
 struct _BSS_INFO_T {

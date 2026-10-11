@@ -3136,3 +3136,73 @@ uint32_t rsnCalRSNXELen(IN P_ADAPTER_T prAdapter,
 }
 #endif
 
+/*----------------------------------------------------------------------------*/
+/*!
+ *
+ * \brief This routine is called to generate the Mobility Domain element for
+ *        associate request frame. The element is taken as-is from the
+ *        supplicant, which owns the FT key hierarchy when it selected an FT
+ *        AKM for the initial mobility domain association.
+ *
+ * \param[in]  prAdapter	The Selected BSS description
+ * \param[in]  prMsduInfo	MSDU packet buffer
+ *
+ * \retval N/A
+ *
+ * \note
+ *      Called by: AIS module, Associate request
+ */
+/*----------------------------------------------------------------------------*/
+void rsnGenerateMDE(IN P_ADAPTER_T prAdapter,
+		    IN OUT P_MSDU_INFO_T prMsduInfo)
+{
+	uint8_t *pucBuffer;
+	P_CONNECTION_SETTINGS_T prConnSettings;
+
+	prConnSettings = &(prAdapter->rWifiVar.rConnSettings);
+
+	if (prConnSettings->rMde.ucLength != ELEM_MAX_LEN_MOBILITY_DOMAIN)
+		return;
+
+	if (GET_BSS_INFO_BY_INDEX(prAdapter, prMsduInfo->ucBssIndex)->eNetworkType != NETWORK_TYPE_AIS)
+		return;
+
+	pucBuffer = (uint8_t *) ((unsigned long)
+				 prMsduInfo->prPacket + (unsigned long)
+				 prMsduInfo->u2FrameLength);
+
+	kalMemCopy(pucBuffer, &(prConnSettings->rMde), sizeof(struct MDE));
+	prMsduInfo->u2FrameLength += IE_SIZE(pucBuffer);
+
+	DBGLOG_MEM8(RSN, INFO, pucBuffer, IE_SIZE(pucBuffer));
+}
+
+/*----------------------------------------------------------------------------*/
+/*!
+ *
+ * \brief This routine is called to calculate the Mobility Domain element
+ *        length for associate request frame.
+ *
+ * \param[in]  prAdapter	Major data structure for driver operation
+ * \param[in]  ucBssIndex	The BSS the frame is built for
+ * \param[in]  prStaRec		unused for this function
+ *
+ * \retval The append MDE length
+ *
+ * \note
+ *      Called by: AIS module, Associate request
+ */
+/*----------------------------------------------------------------------------*/
+uint32_t rsnCalMDELen(IN P_ADAPTER_T prAdapter,
+	IN uint8_t ucBssIndex, P_STA_RECORD_T prStaRec)
+{
+	P_CONNECTION_SETTINGS_T prConnSettings;
+
+	prConnSettings = &(prAdapter->rWifiVar.rConnSettings);
+	if (prConnSettings->rMde.ucLength == ELEM_MAX_LEN_MOBILITY_DOMAIN &&
+	    GET_BSS_INFO_BY_INDEX(prAdapter, ucBssIndex)->eNetworkType == NETWORK_TYPE_AIS)
+		return ELEM_HDR_LEN + ELEM_MAX_LEN_MOBILITY_DOMAIN;
+
+	return 0;
+}
+

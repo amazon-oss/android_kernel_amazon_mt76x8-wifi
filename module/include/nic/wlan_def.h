@@ -899,7 +899,7 @@ typedef enum _ENUM_ANTENNA_NUM {
 #define MAX_NUM_SUPPORTED_AKM_SUITES    15
 #else
 /* max number of supported AKM suites */
-#define MAX_NUM_SUPPORTED_AKM_SUITES    13
+#define MAX_NUM_SUPPORTED_AKM_SUITES    14
 #endif
 #else
 #define MAX_NUM_SUPPORTED_CIPHER_SUITES 8
@@ -996,6 +996,16 @@ struct RSNXE {
 	UINT_16 u2Cap;
 } __KAL_ATTRIB_PACKED__;
 #endif
+
+/* 802.11r Mobility Domain element, carried from the supplicant into the
+ * association request for FT initial mobility domain association.
+ */
+struct MDE {
+	UINT_8 ucElemId;
+	UINT_8 ucLength;
+	UINT_16 u2MdId;
+	UINT_8 ucFtCapPolicy;
+} __KAL_ATTRIB_PACKED__;
 
 /*******************************************************************************
  *                            P U B L I C   D A T A

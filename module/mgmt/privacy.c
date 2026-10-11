@@ -199,6 +199,10 @@ VOID secInit(IN P_ADAPTER_T prAdapter, IN UINT_8 ucBssIndex)
 		RSN_AKM_SUITE_SAE;
 	prAdapter->rMib.dot11RSNAConfigAuthenticationSuitesTable[11].dot11RSNAConfigAuthenticationSuite =
 		RSN_AKM_SUITE_OWE;
+	prAdapter->rMib.dot11RSNAConfigAuthenticationSuitesTable[12].dot11RSNAConfigAuthenticationSuite =
+		RSN_AKM_SUITE_FT_802_1X;
+	prAdapter->rMib.dot11RSNAConfigAuthenticationSuitesTable[13].dot11RSNAConfigAuthenticationSuite =
+		RSN_AKM_SUITE_FT_PSK;
 #endif
 
 	for (i = 0; i < MAX_NUM_SUPPORTED_AKM_SUITES; i++) {
