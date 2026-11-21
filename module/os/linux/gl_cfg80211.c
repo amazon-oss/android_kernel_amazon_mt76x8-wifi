@@ -3626,6 +3626,7 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy, struct net_device *ndev, struct cfg8
 					prGlueInfo->rWpaInfo.ucRSNMfpCap = RSN_AUTH_MFP_DISABLED;
 #endif
 				prGlueInfo->rWpaInfo.ucRsneLen = rRsnInfo.ucRsneLen;
+				prConnSettings->rRsnInfo.u2RsnCap = rRsnInfo.u2RsnCap;
 
 				/* Fill RSNE PMKID Count and List */
 				prConnSettings->rRsnInfo.u2PmkidCnt = rRsnInfo.u2PmkidCnt;
