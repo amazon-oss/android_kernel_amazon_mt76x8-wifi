@@ -1468,6 +1468,10 @@ VOID rsnGenerateRSNIE(IN P_ADAPTER_T prAdapter, IN P_MSDU_INFO_T prMsduInfo)
 			/* for AP mode, keep origin RSN IE content w/o update */
 		}
 #endif
+#if CFG_SUPPORT_CFG80211_AUTH
+		if (GET_BSS_INFO_BY_INDEX(prAdapter, ucBssIndex)->eNetworkType == NETWORK_TYPE_AIS)
+			WLAN_SET_FIELD_16(cp, prConnSettings->rRsnInfo.u2RsnCap);
+#endif
 		cp += 2;
 
 #if CFG_SUPPORT_CFG80211_AUTH
